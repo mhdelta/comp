@@ -211,7 +211,7 @@ def t_newline(t):
 t_ignore = ' \t'
 
 def t_comments(t):
-    r'/(*(.|\n)*?\*)'
+    r'//*(.|\n)*?\*/'
     t.lexer.lineno += t.value.count('\n')
 
 def t_comments_C99(t):

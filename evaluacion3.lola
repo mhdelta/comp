@@ -1,0 +1,55 @@
+(*−−−−−−−−−−−−−−−−− Simplify −−−−−−−−−−−−−−−−−−−−*)
+PROCEDURE traverse(VAR s: Signal);
+BEGIN
+IF s # NIL THEN
+IF s IS Variable THEN
+IF s.x = zero THEN s := zero
+ELSIF s.x = one THEN s := one
+END
+ELSE traverse(s.x); traverse(s.y);
+IF s.fct = not THEN
+IF s.y.fct = not THEN s := s.y.y
+ELSIF s.y = zero THEN s := one
+ELSIF s.y = one THEN s := zero
+END
+ELSIF s.fct = or THEN
+IF s.x = one THEN s := one
+ELSIF s.x = zero THEN s := s.y
+ELSIF s.y = one THEN s := one
+ELSIF s.y = zero THEN s := s.x
+END
+ELSIF s.fct = xor THEN
+IF s.x = zero THEN s := s.y
+ELSIF s.x = one THEN
+IF s.y.fct = not THEN s := s.y.y ELSE s.fct := not; s.x := NIL END
+ELSIF s.y = zero THEN s := s.x
+ELSIF s.y = one THEN
+IF s.x.fct = not THEN s := s.x.y ELSE s.fct := not; s.y := s.x; s.x := NIL END
+END
+ELSIF s.fct = and THEN
+IF s.x = zero THEN s := zero
+ELSIF s.x = one THEN s := s.y
+ELSIF s.y = zero THEN s := zero
+ELSIF s.y = one THEN s := s.x
+END
+ELSIF s.fct = mux THEN
+IF s.x = zero THEN s := s.y.x ELSIF s.x = one THEN s := s.y.y END
+ELSIF s.fct = reg THEN
+IF (s.x = zero) OR (s.x = one) OR (s.y.x = zero) THEN
+Texts.WriteString(W, " dead reg"); Texts.WriteLn(W)
+END
+ELSIF s.fct = latch THEN
+IF s.x = zero THEN Texts.WriteString(W, " dead latch"); Texts.WriteLn(W)
+ELSIF s.x = one THEN s := s.y
+END
+ELSIF s.fct = sr THEN
+IF (s.x = zero) OR (s.y = zero) THEN Texts.WriteString(W, " dead SR"); Texts.WriteLn(W)
+END
+ELSIF s.fct = tsg THEN
+IF (s.x = zero) OR (s.x = one) THEN
+Texts.WriteString(W, " dead tri−state"); Texts.WriteLn(W)
+END
+END
+END
+END
+END traverse;

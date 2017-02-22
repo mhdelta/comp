@@ -1,0 +1,23 @@
+(*−−−−−−−−−−−−−−−−− Find Loops −−−−−−−−−−−−−−−−−−−−*)
+PROCEDURE loop(s: Signal);
+BEGIN
+IF s # NIL THEN
+IF s IS Variable THEN
+IF s.val = black THEN s.val := grey; loop(s.x); s.val := 0
+ELSIF s.val = grey THEN
+WriteName(W, s(Variable)); Texts.WriteString(W, " in loop"); Texts.WriteLn(W);
+Texts.Append(Log, W.buf)
+END
+ELSIF s.fct # reg THEN
+loop(s.x);
+IF s.fct # tsg THEN loop(s.y) END
+END
+END
+END loop;
+PROCEDURE Loops*(v: Variable);
+BEGIN
+IF v.fct IN {array, record} THEN v := v.dsc;
+WHILE v # NIL DO Loops(v); v := v.next END
+ELSIF v.val = black THEN loop(v)
+END
+END Loops;
