@@ -1,0 +1,91 @@
+MODULE DNF; (*NW 25.3.95*)
+(*convert Boolean expression to disjunctive normal form*)
+IMPORT Texts, LSB;
+PROCEDURE copy(s: LSB.Signal): LSB.Signal;
+BEGIN
+IF (s IS LSB.Variable) OR (s.fct = LSB.not) THEN RETURN s
+ELSE RETURN LSB.New(s.fct, copy(s.x), copy(s.y))
+END
+END copy;
+PROCEDURE P(VAR s: LSB.Signal; inv: BOOLEAN);
+BEGIN (*remove not, xor, and mux*)
+IF s IS LSB.Variable THEN
+IF s(LSB.Variable).class = LSB.var THEN s := copy(s.x); P(s, inv)
+ELSIF inv THEN s := LSB.New(LSB.not, NIL, s)
+END
+ELSIF s.fct = LSB.not THEN
+IF inv THEN s := s.y; P(s, FALSE)
+ELSIF  (s.y IS LSB.Variable) THEN s := s.y; P(s, TRUE)
+ELSIF s.y(LSB.Variable).class = LSB.var THEN s := copy(s.y.x); P(s, TRUE)
+END
+ELSIF s.fct = LSB.and THEN
+IF inv THEN s.fct := LSB.or END ;
+P(s.x, inv); P(s.y, inv)
+ELSIF s.fct = LSB.or THEN
+IF inv THEN s.fct := LSB.and END ;
+P(s.x, inv); P(s.y, inv)
+ELSIF s.fct = LSB.xor THEN
+s.fct := LSB.or;
+s.x := LSB.New(LSB.and, s.x, s.y);
+s.y := LSB.New(LSB.and, copy(s.x.x), copy(s.x.y));
+P(s.x.x, FALSE); P(s.x.y,  inv); P(s.y.x, TRUE); P(s.y.y, inv)
+ELSIF s.fct = LSB.mux THEN
+s.fct := LSB.or; s.y.fct := LSB.and;
+s.x := LSB.New(LSB.and, s.x, s.y.x);
+s.y.x := copy(s.x.x);
+P(s.x.x, TRUE); P(s.x.y, inv); P(s.y.x, FALSE); P(s.y.y, inv)
+ELSE HALT(88)
+END
+END P;
+PROCEDURE Q(VAR s: LSB.Signal);
+VAR t: LSB.Signal;
+BEGIN
+IF  (s IS LSB.Variable) & (s.fct # LSB.not) THEN
+IF s.fct = LSB.or THEN
+Q(s.x); Q(s.y);
+IF s.y.fct = LSB.or THEN
+t := s.y; s.y := t.x; t.x := s; s := t; Q(s)
+END
+ELSIF s.fct = LSB.and THEN
+Q(s.x); Q(s.y);
+IF s.x.fct = LSB.or THEN
+t := s.x; s.x := t.y; t.y := s;
+t.x := LSB.New(LSB.and, t.x, copy(s.y)); s := t; Q(s)
+ELSIF s.y.fct = LSB.and THEN
+t := s.y; s.y := t.x; t.x := s; s := t; Q(s)
+ELSIF s.y.fct = LSB.or THEN
+t := s.y; s.y := t.x; t.x := s;
+t.y := LSB.New(LSB.and, copy(s.x), t.y); s := t; Q(s)
+END
+ELSE HALT(99)
+END
+END
+END Q;
+PROCEDURE R(VAR s: LSB.Signal);
+BEGIN P(s, FALSE); Q(s)
+END R;
+PROCEDURE elem(VAR s: LSB.Signal);
+BEGIN
+IF s.fct = LSB.not THEN40
+IF s.y.fct = LSB.reg THEN R(s.y.y) ELSE R(s.y) END
+ELSIF s.fct = LSB.reg THEN R(s.y)
+ELSE R(s)
+END
+END elem;
+PROCEDURE list(v: LSB.Variable);
+BEGIN
+WHILE v # NIL DO
+IF v.class = LSB.out THEN
+IF v.fct = LSB.array THEN list(v.dsc)
+ELSIF (v.fct = LSB.bit) & (v.x # NIL) THEN
+elem(v.x); LSB.Show(v, 0)
+END
+END ;
+v := v.next
+END
+END list;
+PROCEDURE Convert*;
+VAR v: LSB.Variable;
+BEGIN list(LSB.org.dsc)
+END Convert;
+END DNF.

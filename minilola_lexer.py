@@ -39,6 +39,7 @@ tokens = (
     'REPEAT',
     'SHORT',
     'SHORTINT',
+    'STRING',
     'THEN',
     'TO',
     'TRUE',
@@ -87,8 +88,8 @@ tokens = (
 # Regular expressions rules for a simple tokens 
 t_AMPERSANT = r'\&'
 t_APOSTROF = r"'"
-t_ARROW = r'\->'
-t_ASSIGN = r'\:='
+t_ARROW = r'->'
+t_ASSIGN = r':='
 t_CIRCUNFLEX = r'\^'
 t_COLON   = r':'
 t_COMMA  = r','
@@ -235,6 +236,10 @@ def t_SHORTINT(t):
     r'SHORTINT'
     return t
 
+def t_STRING(t):
+    r'"(.)+"'
+    return t
+
 def t_THEN(t):
     r'THEN'
     return t
@@ -307,10 +312,6 @@ def t_comments(t):
     r'[(][*](.|\n)*?[*][)]'
     t.lexer.lineno += t.value.count('\n')
 
-#def t_comments_C99(t):
-#   r'//(.)*?\n'
-#    t.lexer.lineno += 1
-
 def t_error(t):
     print ("Lexical error: " + str(t.value[0]))
     t.lexer.skip(1)
@@ -330,7 +331,7 @@ if __name__ == '__main__':
 	if (len(sys.argv) > 1):
 		fin = sys.argv[1]
 	else:
-		fin = 'loops.lola'
+		fin = 'Evaluaciones/evaluacion.lola'
 	f = open(fin, 'r')
 	data = f.read()
 	print (data)
