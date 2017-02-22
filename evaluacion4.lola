@@ -1,0 +1,43 @@
+PROCEDURE Expand*;
+VAR obj: LSC.Object;
+root, new: LSB.Variable;
+y: LSB.Signal;
+BEGIN Texts.WriteString(W, "expanding "); Texts.WriteString(W, LSC.globalScope.name);
+Texts.WriteLn(W); Texts.Append(LSB.Log, W.buf);
+obj := LSC.localScope.next; new := NIL;
+WHILE (obj # LSC.guard) & (obj.tag = LSC.const) DO
+new := LSB.NewVar(LSB.integer, SHORT(V(obj.b)), NIL, NIL, new, obj.name);
+scope := new; obj := obj.next
+END ;
+WHILE obj # LSC.guard DO
+new := NewVar(obj.a, obj.tag, obj.name, new, NIL); obj := obj.next
+END ;
+scope := new; clk := LSB.clk; S(LSC.body);
+NEW(root); root.fct := LSB.record; COPY(LSC.globalScope.name, root.name); root.dsc := new;
+LSB.Assign(root);
+LSB.Simplify(LSB.org);
+LSB.Loops(LSB.org)
+END Expand;
+PROCEDURE Compile*;
+VAR beg, end, time: LONGINT;
+S: Texts.Scanner; T: Texts.Text; v: Viewers.Viewer;
+BEGIN Texts.OpenScanner(S, Oberon.Par.text, Oberon.Par.pos); Texts.Scan(S);
+IF S.class = Texts.Char THEN
+IF S.c = "*" THEN
+v := Oberon.MarkedViewer();
+IF (v.dsc # NIL) & (v.dsc.next IS TextFrames.Frame) THEN
+LSC.Module(v.dsc.next(TextFrames.Frame).text, 0); Expand
+END
+ELSIF S.c = "@" THEN
+Oberon.GetSelection(T, beg, end, time);
+IF time >= 0 THEN LSC.Module(T, beg); Expand END
+END
+END
+END Compile;
+PROCEDURE Show*;
+BEGIN
+IF LSB.org # NIL THEN LSB.Show(LSB.org, −1) END
+END Show;
+BEGIN Texts.OpenWriter(W); Texts.WriteString(W, "Lola−System NW 15.4.95");
+Texts.WriteLn(W); Texts.Append(LSB.Log, W.buf)
+END Lola.

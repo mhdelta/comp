@@ -1,0 +1,2 @@
+WriteName(W, s(Variable)); Texts.WriteString(W, " in loop"); Texts.WriteLn(W);
+
