@@ -1,5 +1,7 @@
 import ply.lex as lex
 import sys 
+from Tkinter import Tk
+from tkFileDialog import askopenfilename
 
 # list of tokens
 # fOR LoLa
@@ -58,7 +60,6 @@ tokens = (
     'CIRCUNFLEX',
     'COLON',
     'COMMA',
-    'DEQUAL',
     'DEQUAL',
     'DISTINT',
     'DOT',
@@ -332,8 +333,9 @@ if __name__ == '__main__':
 	if (len(sys.argv) > 1):
 		fin = sys.argv[1]
 	else:
-		fin = 'Evaluaciones/evaluacion.lola'
-	f = open(fin, 'r')
+		Tk().withdraw()
+		filename = askopenfilename()
+	f = open(filename, 'r')
 	data = f.read()
 	print (data)
 	lexer.input(data)
