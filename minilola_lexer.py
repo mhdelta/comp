@@ -1,5 +1,5 @@
 import ply.lex as lex
-import sys
+import sys 
 
 # list of tokens
 # fOR LoLa
@@ -322,7 +322,8 @@ def test(data, lexer):
 		tok = lexer.token()
 		if not tok:
 			break
-		print (tok)
+		print (tok)  
+
 
 lexer = lex.lex()
 
