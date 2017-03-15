@@ -2,6 +2,7 @@ import ply.lex as lex
 import sys 
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
+from termcolor import colored
 
 # list of tokens
 # fOR LoLa
@@ -22,6 +23,7 @@ tokens = (
     'EXIT',
     'FALSE',
     'FOR',
+    'HEXA'
     'IF',
     'IMPORT',
     'IN',
@@ -160,6 +162,10 @@ def t_FOR(t):
     r'FOR'
     return t
 
+def t_HEXA(t):
+	r'0[xX][0-9a-fA-F]+'
+	return t
+
 def t_IF(t):
     r'IF'
     return t
@@ -282,14 +288,6 @@ def t_WORD(t):
     r'WORD'
     return t
 
-def t_NUMBER(t):
-    r'\d+(\.\d+)?'
-    t.value = float(t.value)
-    return t
-
-def t_ID(t):
-    r'\w+(_\d\w)*'
-    return t
 
 def t_LESSEQUAL(t):
 	r'<='
@@ -310,13 +308,27 @@ def t_newline(t):
 t_ignore = ' \t'
 
 def t_comments(t):
-    r'[(][*](.|\n)*?[*][)]'
+    r'[(][*](.|\n)*?\*\)'
     t.lexer.lineno += t.value.count('\n')
 
 def t_error(t):
     print ("Lexical error: " + str(t.value[0]))
     t.lexer.skip(1)
-    
+
+def t_invid(t):
+    r'\d+\w+'
+    print ("Lexical error invalid id: " + str(t.value[0:2]))
+    t.lexer.skip(1)
+
+def t_NUMBER(t):
+    r'\d+(\.\d+)?'
+    t.value = float(t.value)
+    return t
+
+def t_ID(t):
+    r'\w+(_\d\w)*'
+    return t
+
 def test(data, lexer):
 	lexer.input(data)
 	while True:
@@ -337,7 +349,7 @@ if __name__ == '__main__':
 		filename = askopenfilename()
 	f = open(filename, 'r')
 	data = f.read()
-	print (data)
+	print colored(data, 'green')
 	lexer.input(data)
 	test(data, lexer)
 	input()

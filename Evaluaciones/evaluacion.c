@@ -3,7 +3,7 @@
 #define altura 67.8
 
 int evaluar (int a, int b, float c){
-  int p,q,*q, r=100, **u;
+  int 2p,q,*q, r=100, **u;
   float r 
   char *z; 
   boolean val=true;
