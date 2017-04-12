@@ -1,5 +1,9 @@
 import ply.lex as lex
 import sys 
+import re
+import codecs
+import os
+from sys import stdout
 from Tkinter import Tk
 from tkFileDialog import askopenfilename
 from termcolor import colored
@@ -7,7 +11,6 @@ from termcolor import colored
 # list of tokens
 # fOR LoLa
 tokens = (
-    # Reserverd words
     #'AUTO',
     'ARRAY',
     'BEGIN',
@@ -53,7 +56,7 @@ tokens = (
     'VAR',
     'WHILE',
     'WORD',
-       
+         
     # Symbols
     'AMPERSANT',
     'APOSTROF',
@@ -87,6 +90,9 @@ tokens = (
     'ID', 
     'NUMBER',
 )
+
+
+
 
 # Regular expressions rules for a simple tokens 
 t_AMPERSANT = r'\&'
