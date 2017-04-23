@@ -20,14 +20,15 @@ tokens = (
     'CHAR',
     'CONST', 
     'DO',
+    'DIV',
     'ELSE',
-    'ELSEIF',
     'END',
     'EXIT',
     'FALSE',
     'FOR',
-    'HEXA'
+    'HEXA',
     'IF',
+    'ELSIF',
     'IMPORT',
     'IN',
     'INOUT',
@@ -38,11 +39,14 @@ tokens = (
     'LOOP',
     'MOD',
     'MODULE',
+    'MUX',
+    'REG',
+    'LATCH',
+    'SR',	
     'NIL',
     'OF',
     'OUT',
     'PROCEDURE',
-    'REG',
     'REPEAT',
     'SHORT',
     'SHORTINT',
@@ -68,6 +72,7 @@ tokens = (
     'DEQUAL',
     'DISTINT',
     'DOT',
+    'DOTDOT',
     'EQUAL',
     'GREATER',
     'GREATEREQUAL',
@@ -104,6 +109,7 @@ t_COLON   = r':'
 t_COMMA  = r','
 t_DISTINT = r'!'
 t_DOT = r'\.'
+t_DOTDOT = r'\..'
 t_EQUAL  = r'='
 t_GREATER = r'>'
 t_HASHTAG = r'\#'
@@ -148,12 +154,20 @@ def t_DO(t):
     r'DO'
     return t
 
+def t_DIV(t):
+    r'DIV'
+    return t
+
 def t_ELSE(t):
     r'ELSE'
     return t
 
-def t_ELSEIF(t):
-    r'ELSEIF'
+def t_IF(t):
+    r'IF'
+    return t
+
+def t_ELSIF(t):
+    r'ELSIF'
     return t
 
 def t_END(t):
@@ -169,12 +183,9 @@ def t_FOR(t):
     return t
 
 def t_HEXA(t):
-	r'0[xX][0-9a-fA-F]+'
-	return t
-
-def t_IF(t):
-    r'IF'
+    r'0[xX][0-9a-fA-F]+'
     return t
+
 
 def t_IMPORT(t):
     r'IMPORT'
@@ -210,6 +221,18 @@ def t_LOOP(t):
 
 def t_MODULE(t):
     r'MODULE'
+    return t
+
+def t_MUX(t):
+    r'MUX'
+    return t
+
+def t_LATCH(t):
+    r'LATCH'
+    return t
+
+def t_SR(t):
+    r'SR'
     return t
 
 def t_MOD(t):

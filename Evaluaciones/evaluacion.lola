@@ -1,24 +1,24 @@
-MODULE Adder;
-
-TYPE Cell; (* Composite Type *)
-  IN 2x,y,ci:BIT; (* input signals *)
-  OUT z,co:BIT; (* output signals *) 
+MODULE Example;
+TYPE Counter (N);
+IN incr : BIT;
+OUT z : [N] BIT;
+VAR c : [N] BIT;
 BEGIN
-  z:=x-y-ci;
-  co:=x*y+x*ci+y*ci;
-END Cell;
-
-CONST N:=8;
-IN X,Y:[N]BIT; ci:BIT; (* input signals *)
-OUT Z:[N]BIT; co:BIT; (* output signals *)
-VAR S:[N]Cell; (* composite type instances *)
-BEGIN
-  S.0(X.0, Y.0, ci); (* inputs in cell 0*)
-  FOR i:=1..N-1 DO
-    S.i(X.i,Y.i,S[i-1].co); (* inputs in cell i *)
-  END;
-  FOR i:=0..N-1 DO
-    Z.i:=S.i.z;
+z[0] := REG (z[0] − incr);
+c[0] := z[0] * incr;
+IF blah blah blah
+FOR i := 1 .. N−1 DO
+z[i] := REG (z[i] − c[i−1]);
+c[i] := z[i] * c[i−1]
 END;
-  co:=S.7.co;
-END Adder.
+END Counter;
+CONST N := 2;
+IN RD' : BIT;
+INOUT D : [N] TS;
+VAR cnt : Counter (N);
+BEGIN
+cnt (N, '1);
+FOR i := 0 .. N−1 DO
+D[i] :=  ̃RD' | cnt.z[i]
+END
+END Example.
