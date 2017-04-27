@@ -36,6 +36,8 @@ tokens = (
     'IS',
     'LONG',
     'LONGINT',
+    'LOGIC0',
+    'LOGIC1',
     'LOOP',
     'MOD',
     'MODULE',
@@ -46,6 +48,7 @@ tokens = (
     'NIL',
     'OF',
     'OUT',
+    'OC',
     'PROCEDURE',
     'REPEAT',
     'SHORT',
@@ -73,6 +76,7 @@ tokens = (
     'DISTINT',
     'DOT',
     'DOTDOT',
+    'DIVISION',
     'EQUAL',
     'GREATER',
     'GREATEREQUAL',
@@ -84,6 +88,7 @@ tokens = (
     'LPAREN',
     'MINUS',
     'NEGATION',
+    'OR',
     'PLUS',
     'RBLOCK',
     'RBRACKET',
@@ -109,6 +114,7 @@ t_COLON   = r':'
 t_COMMA  = r','
 t_DISTINT = r'!'
 t_DOT = r'\.'
+t_DIVISION = r'/'
 t_DOTDOT = r'\..'
 t_EQUAL  = r'='
 t_GREATER = r'>'
@@ -119,6 +125,7 @@ t_LESS   = r'<'
 t_LPAREN = r'\('
 t_MINUS  = r'-'
 t_NEGATION = r'~'
+t_OR = r'\|'
 t_PLUS   = r'\+'
 t_RBLOCK   = r'}'
 t_RBRACKET = r'\]'
@@ -231,6 +238,15 @@ def t_LATCH(t):
     r'LATCH'
     return t
 
+def t_LOGIC0(t):
+    r'\'0'
+    return t
+
+def t_LOGIC1(t):
+    r'\'1'
+    return t
+
+
 def t_SR(t):
     r'SR'
     return t
@@ -250,6 +266,10 @@ def t_OF(t):
 
 def t_OUT(t):
     r'OUT'
+    return t
+
+def t_OC(t):
+    r'OC'
     return t
 
 def t_PROCEDURE(t):
